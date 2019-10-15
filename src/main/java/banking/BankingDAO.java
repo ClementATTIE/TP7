@@ -55,13 +55,21 @@ public class BankingDAO {
 				// On débite le 1° client
 				statement.setFloat( 1, amount * -1);
 				statement.setInt(2, fromID);
-				int numberUpdated = statement.executeUpdate();
+				int numberUpdated = statement.executeUpdate();//renvoie 1 quand ça reussi 
+                                System.out.println("nombre maj "+numberUpdated);
+                                if(numberUpdated == 0){
+                                throw new Exception("client inconnu");
+                                }
 
 				// On crédite le 2° client
 				statement.clearParameters();
 				statement.setFloat( 1, amount);
 				statement.setInt(2, toID);
 				numberUpdated = statement.executeUpdate();
+                                
+                                if(numberUpdated == 0){
+                                throw new Exception("client inconnu");
+                                }
 
 				// Tout s'est bien passé, on peut valider la transaction
 				myConnection.commit();

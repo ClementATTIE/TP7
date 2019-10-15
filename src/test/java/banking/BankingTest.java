@@ -64,7 +64,43 @@ public class BankingTest {
 		assertEquals("Balance incorrecte !", before1 + amount, myDAO.balanceForCustomer(toCustomer), 0.001f);				
 	}
 	
+        @Test
+        public void soldeInsufisant() throws Exception{
+            float montant1 = myDAO.balanceForCustomer(0);
+            float montant2 = myDAO.balanceForCustomer(1);
+            try {
+                myDAO.bankTransferTransaction(0, 1, montant1+63f);
+                fail("exception solde negatif");
+            } catch (Exception e) {
+            }
+            assertEquals("balance incorrecte",myDAO.balanceForCustomer(0), montant1, 0.001f);
+            assertEquals("blance incorrecte",montant2, myDAO.balanceForCustomer(1), 0.001f);
+        }
 
+        @Test
+        public void idInnexistantReceveur() throws Exception{
+        float montant1 = myDAO.balanceForCustomer(0);
+            try {
+                myDAO.bankTransferTransaction(1000, 1, montant1);
+                fail("exception, id inconnu");
+            } catch (Exception e) {
+            }
+            assertEquals("balance incorrecte",myDAO.balanceForCustomer(0), montant1, 0.001f);
+
+        }
+        
+        @Test
+        public void idInnexistantExpediteur() throws Exception{
+        float montant1 = myDAO.balanceForCustomer(0);
+            try {
+                myDAO.bankTransferTransaction(1, 1000, montant1);
+                fail("exception, id inconnu");
+            } catch (Exception e) {
+            }
+            assertEquals("balance incorrecte",myDAO.balanceForCustomer(0), montant1, 0.001f);
+
+        }
+        
 	public static DataSource getDataSource() throws SQLException {
 		org.hsqldb.jdbc.JDBCDataSource ds = new org.hsqldb.jdbc.JDBCDataSource();
 		ds.setDatabase("jdbc:hsqldb:mem:testcase;shutdown=true");
@@ -72,4 +108,7 @@ public class BankingTest {
 		ds.setPassword("sa");
 		return ds;
 	}	
+        
+        
+        
 }
